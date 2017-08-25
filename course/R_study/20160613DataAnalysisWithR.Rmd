@@ -1,0 +1,625 @@
+---
+title: "20160613DataAnalysisWIthR"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+
+
+
+Lesson 3
+========================================================
+
+***
+
+### What to Do First?
+Notes:
+
+***
+
+### Pseudo-Facebook User Data
+Notes:
+
+```{r Pseudo-Facebook User Data}
+
+```
+
+***
+
+### Histogram of Users' Birthdays
+Notes:
+
+```{r Histogram of Users\' Birthdays}
+#install.packages('ggplot2')
+library(ggplot2)
+getwd()
+setwd('E:\\Study\\coursera\\Udacity\\ud651DataAnalysisWithR\\')
+pf = read.csv('pseudo_facebook.tsv', sep = '\t')
+names(pf)
+
+qplot(x = dob_day, data = pf)
+
+qplot(x = dob_day, data = pf) + scale_x_continuous(breaks = 1:31)
+
+qplot(x = dob_day, data = pf) + scale_x_continuous(breaks = 1:31) +
+  facet_wrap(~dob_month, ncol = 3)
+
+ggplot(data = pf, aes(x = dob_day)) + geom_histogram(binwidth = 1) +
+  scale_x_continuous(breaks = 1:31) + facet_wrap(~dob_month) 
+
+ggplot(data = pf, aes(x = dob_day)) + geom_histogram(binwidth = 1) +
+  scale_x_continuous(breaks = 1:31) + facet_wrap(~dob_month)
+
+```
+
+***
+
+#### What are some things that you notice about this histogram?
+Response:
+
+***
+
+### Moira's Investigation
+Notes:
+
+***
+
+### Estimating Your Audience Size
+Notes:
+
+***
+
+#### Think about a time when you posted a specific message or shared a photo on Facebook. What was it?
+Response:
+
+#### How many of your friends do you think saw that post?
+Response:
+
+#### Think about what percent of your friends on Facebook see any posts or comments that you make in a month. What percent do you think that is?
+Response:
+
+***
+
+### Perceived Audience Size
+Notes:
+
+***
+### Faceting
+Notes:
+
+```{r Faceting}
+
+```
+
+#### Let's take another look at our plot. What stands out to you here?
+Response:
+
+***
+
+### Be Skeptical - Outliers and Anomalies
+Notes:
+
+***
+
+### Moira's Outlier
+Notes:
+#### Which case do you think applies to Moiras outlier?
+Response:
+
+***
+
+### Friend Count
+Notes:
+
+#### What code would you enter to create a histogram of friend counts?
+
+```{r Friend Count}
+ggplot(data = pf, aes(x = friend_count)) + geom_histogram()
+ggplot(data = pf, aes(x = friend_count)) + geom_histogram() + scale_x_continuous(limits = c(0,1000))
+
+qplot(x = friend_count, data = pf)
+qplot(x = friend_count, data = pf, xlim = c(0,1000))
+qplot(x = friend_count, data = pf) + scale_x_continuous(limits = c(0,1000))
+qplot(x = friend_count, data = pf, binwidth = 25) + 
+  scale_x_continuous(limits = c(0,1000), breaks = seq(0,1000,50))
+qplot(x = friend_count, data = pf, binwidth = 25) + 
+  scale_x_continuous(limits = c(0,1000), breaks = seq(0,1000,50)) +
+  facet_wrap(~gender) #split based on gender
+
+qplot(x = friend_count, data = subset(pf, !is.na(gender)), binwidth = 25) + 
+  scale_x_continuous(limits = c(0,1000), breaks = seq(0,1000,50)) +
+  facet_wrap(~gender) #split based on gender. use subset function to remove na in gender
+
+qplot(x = friend_count, data = na.omit(pf), binwidth = 25) + 
+  scale_x_continuous(limits = c(0,1000), breaks = seq(0,1000,50)) +
+  facet_wrap(~gender) #split based on gender. any observation with na will be removed with na.omit
+
+
+
+```
+
+#### How is this plot similar to Moira's first plot?
+Response:
+
+***
+
+### Limiting the Axes
+Notes:
+
+```{r Limiting the Axes}
+
+```
+
+### Exploring with Bin Width
+Notes:
+
+***
+
+### Adjusting the Bin Width
+Notes:
+
+### Faceting Friend Count
+```{r Faceting Friend Count}
+# What code would you add to create a facet the histogram by gender?
+# Add it to the code below.
+qplot(x = friend_count, data = pf, binwidth = 10) +
+  scale_x_continuous(limits = c(0, 1000),
+                     breaks = seq(0, 1000, 50))
+```
+
+***
+
+### Omitting NA Values
+Notes:
+
+```{r Omitting NA Values}
+
+```
+
+***
+
+### Statistics 'by' Gender
+Notes:
+
+```{r Statistics \'by\' Gender}
+table(pf$gender)
+by(pf$friend_count,pf$gender,summary)
+```
+
+#### Who on average has more friends: men or women?
+Response:
+
+#### What's the difference between the median friend count for women and men?
+Response:
+
+#### Why would the median be a better measure than the mean?
+Response:
+
+***
+
+### Tenure
+Notes:
+
+```{r Tenure}
+qplot(x = tenure, data = pf, color = I('black'), fill = I('#099DD9'))
+
+qplot(x = tenure, data = pf, color = I('black'), fill = I('#099DD9'), binwidth = 30)
+
+
+```
+
+***
+
+#### How would you create a histogram of tenure by year?
+
+```{r Tenure Histogram by Year}
+qplot(x = tenure/365, data = pf, color = I('black'), fill = I('#099DD9'), binwidth = 1)
+
+qplot(x = tenure/365, data = pf, color = I('black'), fill = I('#099DD9'), binwidth = 0.25)
+
+qplot(x = tenure/365, data = pf, color = I('black'), fill = I('#F79420'), binwidth = 0.25) +
+  scale_x_continuous(breaks = seq(1,7,1), limits = c(0,7))
+ 
+```
+
+***
+
+### Labeling Plots
+Notes:
+
+```{r Labeling Plots}
+
+qplot(x = tenure/365, data = pf, color = I('black'),
+      fill = I('#F79420'), binwidth = 0.25,
+      xlab = 'Numbers of years using Facebook',
+      ylab = 'Number of users in sample') +
+  scale_x_continuous(breaks = seq(1,7,1), limits = c(0,7))
+
+```
+
+***
+
+### User Ages
+Notes:
+
+```{r User Ages}
+qplot(x = age, data = pf)
+
+qplot(x = age, data = pf, binwidth = 1, color = I('black'), fill = I('#00FF00'))
+
+qplot(x = age, data = pf, binwidth = 0.5)
+
+qplot(x = age, data = pf, binwidth = 1,
+      xlab = 'age',
+      ylab = 'number of users') +
+  scale_x_continuous(limits = c(14,50))
+
+summary(pf$age)
+
+```
+
+#### What do you notice?
+Response:
+
+***
+
+### The Spread of Memes
+Notes:
+
+***
+
+### Lada's Money Bag Meme
+Notes:
+
+***
+
+### Transforming Data
+Notes:
+
+***
+
+### Add a Scaling Layer
+Notes:
+
+```{r Add a Scaling Layer}
+qplot(x = friend_count, data = pf)
+summary(pf$friend_count)
+summary(log10(pf$friend_count+1))
+summary(sqrt(pf$friend_count))
+
+
+#install.packages('gridExtra') 
+library(gridExtra) 
+
+qplot(x = log10(pf$friend_count+1), data = pf)
+
+p1 = qplot(x = friend_count, data = pf)
+p2 = qplot(x = log10(pf$friend_count+1), data = pf)
+p3 = qplot(x = sqrt(pf$friend_count), data = pf)
+grid.arrange(p1,p2,p3,ncol = 1)
+
+
+p4 = ggplot(aes(x = friend_count), data = pf) + geom_histogram()
+p5 = p4 + scale_x_log10()
+p6 = p4 + scale_x_sqrt()
+grid.arrange(p4,p5,p6, ncol = 1)
+
+grid.arrange(p2,p5,ncol = 2)
+```
+
+***
+
+
+### Frequency Polygons
+
+```{r Frequency Polygons}
+
+qplot(x = friend_count, data = subset(pf, !is.na(gender)),
+      binwidth = 10) +
+  scale_x_continuous(lim = c(0,1000), breaks = seq(0,1000,50)) +
+  facet_wrap(~gender)
+
+qplot(x = friend_count,  data = subset(pf, !is.na(gender)),
+      binwidth = 10, geom = 'freqpoly', color =gender) +
+  scale_x_continuous(lim = c(0,1000), breaks = seq(0,1000,50))
+
+
+qplot(x = friend_count, y = ..count../sum(..count..), data = subset(pf, !is.na(gender)),
+      binwidth = 10, geom = 'freqpoly', color =gender,
+      xlab = 'Friend Count',
+      ylab = 'Proportion of Users with that friend count') +
+  scale_x_continuous(lim = c(0,1000), breaks = seq(0,1000,50))
+
+
+
+```
+
+***
+
+### Likes on the Web
+Notes:
+
+```{r Likes on the Web}
+p8 = qplot(x = www_likes,  data = subset(pf, !is.na(gender)),
+       geom = 'freqpoly', color =gender) + 
+  scale_x_continuous()
+p8
+
+p9 = p8 + scale_x_continuous(lim = c(0,1000), breaks = seq(0,1000,50))
+p9
+
+p10 = p8 + scale_x_log10()
+p10
+
+by(pf$www_likes, pf$gender, summary)
+by(pf$www_likes, pf$gender, sum)
+
+
+```
+
+
+***
+
+### Box Plots
+Notes:
+
+```{r Box Plots}
+
+qplot(geom = 'boxplot', 
+      data = subset(pf, !is.na(gender)), 
+      x = gender, y = friend_count)
+
+qplot(geom = 'boxplot', 
+      data = subset(pf, !is.na(gender)), 
+      x = gender, y = friend_count) + 
+  scale_y_continuous(lim = c(0,1000)) 
+#some data will be removed. Thus, coord_cartesian is a better choice
+
+qplot(geom = 'boxplot', 
+      data = subset(pf, !is.na(gender)), 
+      x = gender, y = friend_count,
+      ylim = c(0,1000))
+
+qplot(geom = 'boxplot', 
+      data = subset(pf, !is.na(gender)), 
+      x = gender, y = friend_count) +
+  coord_cartesian(ylim = c(0,1000))
+
+qplot(geom = 'boxplot', 
+      data = subset(pf, !is.na(gender)), 
+      x = gender, y = friend_count) +
+  coord_cartesian(ylim = c(0,250))
+
+by(pf$friend_count, pf$gender, summary)
+```
+
+#### Adjust the code to focus on users who have friend counts between 0 and 1000.
+
+```{r}
+
+```
+
+***
+
+### Box Plots, Quartiles, and Friendships
+Notes:
+
+```{r Box Plots, Quartiles, and Friendships}
+
+```
+
+#### On average, who initiated more friendships in our sample: men or women?
+
+```{r}
+qplot(x = gender, y = friendships_initiated,
+      data = subset(pf, !is.na(gender)), geom = 'boxplot')
+
+qplot(x = gender, y = friendships_initiated,
+      data = subset(pf, !is.na(gender)), geom = 'boxplot') +
+  coord_cartesian(ylim = c(0,500))
+
+qplot(x = gender, y = friendships_initiated,
+      data = subset(pf, !is.na(gender)), geom = 'boxplot') +
+  coord_cartesian(ylim = c(0,150))
+
+by(pf$friendships_initiated, pf$gender,summary)
+```
+Response:
+#### Write about some ways that you can verify your answer.
+Response:
+```{r Friend Requests by Gender}
+
+```
+
+Response:
+
+***
+
+### Getting Logical
+Notes:
+
+```{r Getting Logical}
+
+summary(pf$mobile_likes)
+summary(pf$mobile_likes >0)
+
+mobile_check_in = NA
+pf$mobile_check_in = ifelse(pf$mobile_likes>0,1,0)
+pf$mobile_check_in = factor(pf$mobile_check_in)
+summary(pf$mobile_check_in)
+
+sum(pf$mobile_check_in ==1)/ length(pf$mobile_check_in)
+
+
+```
+
+Response:
+
+***
+
+### Analyzing One Variable
+Reflection:
+
+***
+
+#Problem set: Explore One variable 20160625
+```{r}
+
+getwd()
+setwd('E:\\Study\\coursera\\Udacity\\ud651DataAnalysisWithR\\')
+library(ggplot2)
+data("diamonds")
+summary(diamonds)
+
+# Create a histogram of the price of
+# all the diamonds in the diamond data set.
+qplot(x = price, data = diamonds)
+
+summary(diamonds$price)
+
+#how many diamonds cost less than $500?
+sum(diamonds$price < 500)
+#how many diamonds cost less than $250?
+sum(diamonds$price < 250)
+#how many diamonds cost $15,000 or more?
+sum(diamonds$price >= 15000)
+
+
+# Explore the largest peak in the
+# price histogram you created earlier.
+
+# Try limiting the x-axis, altering the bin width,
+# and setting different breaks on the x-axis.
+
+# There won't be a solution video for this
+# question so go to the discussions to
+# share your thoughts and discover
+# what other people find.
+
+# You can save images by using the ggsave() command.
+# ggsave() will save the last plot created.
+# For example...
+#                  qplot(x = price, data = diamonds)
+#                  ggsave('priceHistogram.png')
+
+# ggsave currently recognises the extensions eps/ps, tex (pictex),
+# pdf, jpeg, tiff, png, bmp, svg and wmf (windows only).
+
+# Submit your final code when you are ready.
+
+qplot(x = price, data = diamonds, xlim = c(0,1000)) 
+qplot(x = price, data = diamonds, xlim = c(0,10000)) 
+qplot(x = price, data = diamonds, xlim = c(0,10000), binwidth = 100) 
+
+# Break out the histogram of diamond prices by cut.
+
+# You should have five histograms in separate
+# panels on your resulting plot.
+qplot(x = price, data = diamonds) + facet_wrap(~cut)
+
+by(diamonds$price, diamonds$cut, summary)
+by(diamonds$price, diamonds$cut, max)
+by(diamonds$price, diamonds$cut, min)
+by(diamonds$price, diamonds$cut, median)
+
+# In the two last exercises, we looked at
+# the distribution for diamonds by cut.
+
+# Run the code below in R Studio to generate
+# the histogram as a reminder.
+
+# ===============================================================
+
+qplot(x = price, data = diamonds) + facet_wrap(~cut)
+                                                                               
+# ===============================================================
+
+# In the last exercise, we looked at the summary statistics
+# for diamond price by cut. If we look at the output table, the
+# the median and quartiles are reasonably close to each other.
+
+# diamonds$cut: Fair
+#    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+#     337    2050    3282    4359    5206   18570 
+# ------------------------------------------------------------------------ 
+# diamonds$cut: Good
+#    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+#     327    1145    3050    3929    5028   18790 
+# ------------------------------------------------------------------------ 
+# diamonds$cut: Very Good
+#    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+#     336     912    2648    3982    5373   18820 
+# ------------------------------------------------------------------------ 
+# diamonds$cut: Premium
+#    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+#     326    1046    3185    4584    6296   18820 
+# ------------------------------------------------------------------------ 
+# diamonds$cut: Ideal
+#    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+#     326     878    1810    3458    4678   18810 
+
+# This means the distributions should be somewhat similar,
+# but the histograms we created don't show that.
+
+# The 'Fair' and 'Good' diamonds appear to have 
+# different distributions compared to the better
+# cut diamonds. They seem somewhat uniform
+# on the left with long tails on the right.
+
+# Let's look in to this more.
+
+# Look up the documentation for facet_wrap in R Studio.
+# Then, scroll back up and add a parameter to facet_wrap so that
+# the y-axis in the histograms is not fixed. You want the y-axis to
+# be different for each histogram.
+
+# If you want a hint, check out the Instructor Notes.
+qplot(x = price, data = diamonds) + facet_wrap(~cut, scales = 'free')
+
+# Create a histogram of price per carat
+# and facet it by cut. You can make adjustments
+# to the code from the previous exercise to get
+# started.
+
+# Adjust the bin width and transform the scale
+# of the x-axis using log10.
+qplot(x = price/carat, data = diamonds, log = 'x') + facet_wrap(~cut, scales = 'free')
+qplot(x = price/carat, data = diamonds) + facet_wrap(~cut, scales = 'free') + scale_x_log10()
+
+# Investigate the price of diamonds using box plots,
+# numerical summaries, and one of the following categorical
+# variables: cut, clarity, or color.
+qplot(geom = 'boxplot', data = diamonds, x = color, y = price)
+qplot(geom = 'boxplot', data = diamonds, x = clarity, y = price)
+qplot(geom = 'boxplot', data = diamonds, x = cut, y = price)
+
+by(diamonds$price, diamonds$color,summary)
+by(diamonds$price, diamonds$color,IQR)
+by(diamonds$price, diamonds$color,quantile)
+
+# Investigate the price per carat of diamonds across
+# the different colors of diamonds using boxplots.
+qplot(geom = 'boxplot', data = diamonds, x = color, y = price/carat)
+
+
+#Investigate the weight of diamonds (carat) using a frequency polygon. Use different bin width
+# to see how the frequency polygon changes. what carat size has a count greater than 2000?
+
+qplot(x = carat, data = diamonds, binwidth = 0.1)
+table(diamonds$carat)
+
+```
+
+
+
+Click **KnitHTML** to see all of your hard work and to have an html
+page of this lesson, your answers, and your notes!
