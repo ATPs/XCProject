@@ -703,7 +703,7 @@ def treeComparisonResultChecking20171010():
     output.write(open(folder+"../20171017CombinedPages.pdf","wb"))
     
     
-    
+
     
     
     

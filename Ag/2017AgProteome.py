@@ -70,3 +70,53 @@ def cleanTheProteinGroupsFiles():
     df_group2.loc[:,'annotation'] = newnames
     df_group2.to_csv(folder+'20170916AgProteomeAll_group.csv')
     
+def annotateMCOT2forProteome20171018():
+    '''
+    find MCOT2 sequences with no match with AGAP proteins
+    '''
+    filename = r"X:\Insects\Anopheles_gambiae\MCOT2\MCDpeptides.fasta"
+    fout = open(r"X:\Insects\Anopheles_gambiae\MCOT2\MCDpeptidesToAnnotate20171018.fasta",'w')
+    import re
+    from Bio import SeqIO
+    for s in SeqIO.parse(open(filename),'fasta'):
+        if not re.findall('AGAP\d\d\d\d\d\d', s.description):
+            fout.write('>'+s.description+'\n'+str(s.seq)+'\n')
+    fout.close()
+
+def addNamesForResult20171028():
+    '''
+    simplify the naming column for the two xlsx files
+    '''
+    import pandas as pd
+    df = pd.read_excel(r"C:\Users\ATPs\OneDrive\Lab\works\2017DmSPSPH\20170823AgMassSpecDataAnalysisAll\20170916AgProteomeAll_group.xlsx")
+    def preferenceFunc(x):
+        if "AGAP" in x:
+            return 2
+        if "MCD" in x:
+            return 3
+        return 1
+    for _row in df.index:
+        _r = df.loc[_row,:]
+        _proteins = _r['Protein IDs'].split(';')
+        _counts = [int(e) for e in _r['Peptide counts (all)'].split(';')]
+        _protein_keep = _proteins[:_counts.count(_counts[0])]
+        _protein_keep.sort(key = lambda x: preferenceFunc(x))
+        _proteinID = _protein_keep[0]
+        df.loc[_row,'Protein Best'] = _proteinID
+    
+    df.to_csv('20170916AgProteomeAll_group.csv')
+    
+    #get AGAP naming
+    from Bio import SeqIO
+    ls_fa = list(SeqIO.parse(open(r"X:\Insects\Anopheles_gambiae\2017OGS\Anopheles-gambiae-PEST_PEPTIDES_AgamP4.7.fa"),'fasta'))
+    ls_name = []
+    for _s in ls_fa:
+        _id = _s.id
+        _name = _s.description.split(' ',1)[1].split('|')[0]
+        ls_name.append((_id,_name))
+    fout = open('list.txt','w')
+    for _id, _name in ls_name:
+        fout.write(_id+'\t'+_name+'\n')
+    fout.close()
+        
+            
