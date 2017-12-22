@@ -1,0 +1,66 @@
+---
+title: "20171120CelegansCellLineageComparison"
+author: "Xiaolong Cao"
+date: "2017/11/20"
+output: html_document
+---
+
+```{r setup}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_knit$set(root.dir = "C:\\Users\\ATPs\\OneDrive\\Lab\\YangLab\\YangLabSharedProject_Xiaolong\\Celegans\\Lineages")
+source("C:\\Users\\ATPs\\Documents\\GitHub\\XCProject\\YangLab\\20171121TreeAlignmentFunctions.R")
+```
+
+# Analysis of the embryonic tree alignments of C. elegans
+## current working directory and load packages
+```{r check working directory and load packages}
+getwd()
+library(ape)
+library(ggplot2)
+library(dplyr)
+library(ggtree)
+library(treeio)
+```
+
+## files to use
+```{r files to use}
+fname.referenceTree = "fun.alm"
+fname.symmetry = "symmetry-sisters.csv"
+fname.alignments = "fun1000000.alml"
+```
+
+```{r read reference complete tree nodes }
+ReadInputTree <- function(filename){
+  return(read.table(filename,sep = '\t',header = TRUE, as.is = TRUE, colClasses = "character", quote = ''))
+}
+referenceTree = ReadInputTree(fname.referenceTree)
+head(referenceTree)
+summary(referenceTree)
+```
+
+## create the complete Tree in "phylo" format defined by ape
+```{r create phylo tree}
+phyloTree <- BuildFullPhyloWithLineage(referenceTree$Lineage)
+#set edge.length to 1
+phyloTree$edge.length <- rep(1, dim(phyloTree$edge)[1])
+```
+
+## generate all subtrees
+```{r generate subtrees}
+phyloSubTrees <- subtrees(phyloTree)
+phyloSubTreesMin7 <- phyloSubTrees[unlist(lapply(phyloSubTrees, function(x) (x$Ntip + x$Nnode)>=7))]
+
+
+```
+
+
+
+
+
+
+
+
+
+
+
+

@@ -28,10 +28,12 @@ ReadInputTree <- function(filename){
   return(read.table(filename,sep = '\t',header = TRUE, as.is = TRUE, colClasses = "character", quote = ''))
 }
 
-ReadTreeComparison <- function(filename){
+ReadTreeComparison <- function(filename, t.count = NULL){
   f.lines <- readLines(filename, file.info(filename)$size)
   f.length <- length(f.lines)
-  t.count <- f.length %/% 13
+  if (is.null(t.count)){
+    t.count <- f.length %/% 13
+  }
   id <- rep(NA,t.count)
   Score <- rep(NA,t.count)
   RootS <- rep(NA,t.count)
@@ -91,7 +93,6 @@ ReadTreeComparison <- function(filename){
   alignments$MatchS <- strsplit(sub('MatchS:', '', alignments$MatchS, fixed = TRUE), ' ')
   alignments$MatchT <- strsplit(sub('MatchT:', '', alignments$MatchT, fixed = TRUE), ' ')
   row.names(alignments) <- alignments$id
-  alignments <- alignments[,-1]
   return(alignments)
 }
 

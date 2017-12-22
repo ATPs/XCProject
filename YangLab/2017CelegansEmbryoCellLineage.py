@@ -713,8 +713,21 @@ def treeComparisonResultChecking20171010():
     
     
     
+    def f(n):
+        l = list(range(n))
+        s = 0
+        for i in l:
+            l2 = list(range(i))
+            for j in l2:
+                s += j
+        return s
     
+    def f2(n):
+        return sum([e*(e-1)/2 for e in range(n)])
     
+    def f3(n):
+        return sum([sum(range(e)) for e in range(n)])
     
-    
+    def f4(n):
+        return (n+1)*n *(n-1)/6
     
