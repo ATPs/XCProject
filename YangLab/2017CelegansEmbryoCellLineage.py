@@ -730,4 +730,50 @@ def treeComparisonResultChecking20171010():
     
     def f4(n):
         return (n+1)*n *(n-1)/6
-    
+
+a = 4**26
+b = 3.1 * 10**12
+import time
+t1 = time.time()
+n = 10000000
+import numpy as np
+ls = (np.log((a-x)/a) for x in range(int(b/n)))
+d = np.sum(ls)
+print(time.time()-t1)
+
+
+files = ['X:\\Insects\\1520\\1520_A\\1520_A_Bar\\1520_Bar_r_A3.raw',
+ 'X:\\Insects\\1520\\1520_A\\1520_A_P4\\1520_P4_A3.raw',
+ 'X:\\Insects\\1520\\1520_A\\1520_A_adult\\1520_adult_r_A3.raw',
+ 'X:\\Insects\\1520\\1520_A\\1520_a_P13\\1520_P13_A3.raw',
+ 'X:\\Insects\\1520\\1520_B\\1520_B_Adult\\1520_adult_B3r.raw',
+ 'X:\\Insects\\1520\\1520_B\\1520_B_Bar\\1520_Bar_B3rrr.raw',
+ 'X:\\Insects\\1520\\1520_B\\1520_B_P13\\1520_P13r_B3_2.raw',
+ 'X:\\Insects\\1520\\1520_B\\1520_B_P4\\1520_P4_B3.raw',
+ 'X:\\Insects\\1520\\1520_C\\1520_C_P13\\1520_P13_C3.raw',
+ 'X:\\Insects\\1520\\1520_C\\1520_C_P4\\1520_P4_C3.raw',
+ 'X:\\Insects\\1520\\1520_C\\1520_C_adult\\1520_adult_C3.raw',
+ 'X:\\Insects\\1520\\1520_C\\1520_C_bar\\1520_Bar_C3r.raw']
+
+from shutil import copyfile
+for file in files:
+    for n in range(19):
+        copyfile(file, file[:-3]+str(n)+".raw")
+
+fout = open("list.txt", "w")
+for file in files:
+    for n in range(19):
+        #fout.write("<string>" + "temp"+ "</string>\n")
+        fout.write("<int>0</int>\n")
+fout.close()
+
+fout = open("list.txt","w")
+for j in range(12):
+    for i in range(1,28):
+        fout.write(str(i)+"\n")
+fout.close()
+
+ls = open("list.txt").readlines()
+ls.sort()
+
+open("list.txt","w").write("".join(ls))

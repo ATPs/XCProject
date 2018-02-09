@@ -148,7 +148,49 @@ ReadLocaTreeComparison <- function(filename,t.count = NULL){
   return(alignments)
 }
 
-
+ReadTreeAlignmentsWithTest <- function(filename){
+  # read the TreeAlignmentFile, return a data.frame. convert the numeric values.
+  f.lines <- readLines(filename)
+  f.length <- length(f.lines)
+  t.count <- f.length %/% 13
+  alignments <- read.csv(col.names = c("id","Score","RootS","RootT","PruneS","PruneT","MatchS", "MatchT","Random","Random.min","Random.max","Random.avg","pvalue"),text = "")
+  for (i in 1:t.count){
+    l <- i * 9 - 9
+    id <- i
+    for (j in 1:8){
+      alignments[i,j] = f.lines[l+j]
+    }
+  }
+  for (i in 1:t.count){
+    l <- 9 * t.count + 4 * i - 4
+    alignments[i, "Random"] <- f.lines[l+2]
+    alignments[i, "Random.min"] <- strsplit(strsplit(f.lines[l+3], ' ')[[1]][1],':')[[1]][2]
+    alignments[i, "Random.max"] <- strsplit(strsplit(f.lines[l+3], ' ')[[1]][2],':')[[1]][2]
+    alignments[i, "Random.avg"] <- strsplit(strsplit(f.lines[l+3], ' ')[[1]][3],':')[[1]][2]
+    alignments[i, "pvalue"] <- strsplit(strsplit(f.lines[l+3], ' ')[[1]][4],':')[[1]][2]
+  }
+  
+  alignments$id <- sub('{','',alignments$id,fixed = TRUE)
+  alignments$Score <- sub('Score:', '', alignments$Score, fixed = TRUE)
+  alignments$RootS <- sub('RootS:', '', alignments$RootS, fixed = TRUE)
+  alignments$RootT <- sub('RootT:', '', alignments$RootT, fixed = TRUE)
+  alignments$PruneS <- strsplit(sub('PruneS:', '', alignments$PruneS, fixed = TRUE), ' ')
+  alignments$PruneT <- strsplit(sub('PruneT:', '', alignments$PruneT, fixed = TRUE), ' ')
+  alignments$MatchS <- strsplit(sub('MatchS:', '', alignments$MatchS, fixed = TRUE), ' ')
+  alignments$MatchT <- strsplit(sub('MatchT:', '', alignments$MatchT, fixed = TRUE), ' ')
+  alignments$Random <- strsplit(sub('PValue:', '', alignments$Random, fixed = TRUE), ' ')
+  
+  alignments$Score <- as.numeric(alignments$Score)
+  for (i in 1:t.count){
+    alignments$Random[[i]] <- as.numeric(alignments$Random[[i]])
+  }
+  alignments$Random.min <- as.numeric(alignments$Random.min)
+  alignments$Random.max <- as.numeric(alignments$Random.max)
+  alignments$Random.avg <- as.numeric(alignments$Random.avg)
+  alignments$pvalue <- as.numeric(alignments$pvalue)
+  
+  return(alignments)
+}
 
 
 
