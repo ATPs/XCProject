@@ -8,7 +8,7 @@ Created on Mon Jul 07 15:32:37 2014
 from Bio import SeqIO
 
 import sys
-sys.path.append("D:\\P\\3Language\\Xiaolong\\python\\XCProject\\fasta\\")
+#sys.path.append("D:\\P\\3Language\\Xiaolong\\python\\XCProject\\fasta\\")
 
 def open_to_list(file_name):
     """

@@ -1,0 +1,8 @@
+Get warmed up with a quick hack.
+
+1. Start with a tests/find_tests.sh as a simple test of expected results.
+2. Write English comments describing what it should do.
+3. Research online what can do that.
+4. Fill in the comments with code and rerun the .sh to test
+5. Keep running the tests to make it work right.
+6. Write more tests.

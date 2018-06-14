@@ -1,0 +1,41 @@
+import asyncore
+
+CLIENTS = []
+
+class EchoHandler(asyncore.dispatcher_with_send):
+
+    def handle_read(self):
+        data = self.recv(8192)
+        if data:
+            bad_clients = []
+            # for each connected client
+            for i, sock in enumerate(CLIENTS):
+                try:
+                    # send them to the response
+                    sock.send(data)
+                except:
+                    print("Socket bad", sock)
+                    bad_clients.append(i)
+            #self.send(data)
+            print("Removing clients", bad_clients)
+            for i in bad_clients:
+                del CLIENTS[i]
+
+class EchoServer(asyncore.dispatcher):
+
+    def __init__(self, host, port):
+        print("host",host,"port",port)
+        asyncore.dispatcher.__init__(self)
+        self.create_socket()
+        self.set_reuse_addr()
+        self.bind((host, port))
+        self.listen(5)
+
+    def handle_accepted(self, sock, addr):
+        print('Incoming connection from %s' % repr(addr))
+        # save their sockets in the clients list
+        CLIENTS.append(sock)
+        handler = EchoHandler(sock)
+
+server = EchoServer('localhost', 8080)
+asyncore.loop()

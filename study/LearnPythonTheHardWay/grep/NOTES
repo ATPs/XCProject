@@ -1,0 +1,6 @@
+Get more serious about this project by using tests/grep_tests.py to test it
+1. Clean up grep_tests.py
+2. Write out *expecte* results as the tests.
+3. Look at ../find/bin/find for components for the tests
+4. Create a module for the test.
+5. Use the module to make bin/grep work.

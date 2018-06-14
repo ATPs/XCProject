@@ -1,0 +1,39 @@
+#!/usr/bin/env python3.6
+
+from flask import Flask
+import markdown
+import sys
+import os
+dir_path = os.path.dirname(os.path.realpath(__file__))
+sys.path.append(dir_path+"/..")
+from mdserve import utils
+
+app = Flask(__name__)
+app.debug = True
+
+@app.route("/")
+def hello():
+    return utils.convert_markdown("index")
+
+# if they go to.html, serve that .md file
+# stuff/index.html
+# /foo.html
+@app.route("/<directory>/<doc>.html")
+def mdfile(directory, doc):
+    return "MD File"
+
+@app.route("/<doc>.html")
+def mdfile2(doc):
+    return utils.convert_markdown(doc)
+
+
+# if they go to any other directory, server that index.html
+# stuff/
+@app.route("/<subdir>/")
+def sub_directory(subdir):
+    # get the index.md for the subdir
+    docs = os.path.join(subdir,"index")
+    return utils.convert_markdown(docs)
+
+if __name__=="__main__":
+    app.run()
