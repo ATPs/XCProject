@@ -379,6 +379,7 @@ def fasta_within_seq_big_faster(myfasta, nleft = 0, nright = 0):
         if seqright.count(seqleftn) == 0:
             myfasta_nowithin.append(myfasta_sort[dummy_i])
     myfasta_nowithin.append(myfasta_sort[-1])
+    print('before',len(myfasta),' after',len(myfasta_nowithin))
     return myfasta_nowithin
 
 

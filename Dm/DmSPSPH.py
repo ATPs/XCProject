@@ -907,7 +907,7 @@ def fourwayAgreementCount20170731():
     grouping, chr location, tree location expression groups
     '''
     import pandas as pd
-    df = pd.read_csv(r"C:\Users\k\OneDrive\Lab\works\2017DmSPSPH\Fig\raw\20170731GCTE.txt",sep='\t')
+    df = pd.read_csv(r"C:\Users\ATPs\OneDrive\Lab\works\2017DmSPSPH\2017DmSPSPH\Fig\raw\20170731GCTE.txt",sep='\t')
     df.columns = list('NGCTE')
     GROUP = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890'
     for n in 'CTE':
@@ -1025,9 +1025,9 @@ def fourwayAgreementCount20170731():
                 if len(_e) >1:
                     _ls += _e
             print(check, len(_ls))
-        for i in dcGene['CTE'].values():
+        for k,i in dcGene['CTE'].items():
             if len(i)>1:
-                print(','.join(e[0] for e in i))
+                print(k,','.join(e[0] for e in i))
     
     threeWayCountIndividual(df)
     for _k in 'CMSG':
