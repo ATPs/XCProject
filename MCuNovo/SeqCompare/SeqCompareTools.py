@@ -15,7 +15,7 @@ import time
 import os
 import pandas as pd
 import re
-from multiprocessing import Pool
+
 
 
 
@@ -109,10 +109,10 @@ def seqs2kmerdic(seqs,kmerlen=20):
         dckmer[kmernum] = list(dckmer[kmernum])
     return dckmer
 
-def getPairsFromTwoListSeqs(seqs1, seqs2, identitymin = 20, max_target = float('inf'),error_rate = 0.02,muscle_exe = r"C:\P\Muscle\muscle3.8.31_i86win32.exe"):
+def getPairsFromTwoListSeqs(seqs1, seqs2, identitymin = 20, max_target = float('inf')):
     '''
     seqs1 and seqs2 are two list of sequences in SeqIO format
-    return a list of tuple, seq1_id, seq2_id, 
+    return a list of tuple, seq1_id, seq2_id, here seq1/2_id means the location of seq in the list of seqs1/2
     for each seq1_id, compare with at most max_target sequences in seqs2
     default, compare all sequences in seqs1 and seqs2 pairs which have at least one identical region with length of 20
     '''
@@ -143,74 +143,4 @@ def getPairsFromTwoListSeqs(seqs1, seqs2, identitymin = 20, max_target = float('
     print('%d pairs to compare, total time %d'%(len(df),time4-time1))
     return df
 
-def compare2lsSeqs(seqs1, seqs2, identitymin = 20, outfile = None, max_target = float('inf'),error_rate = 0.02,muscle_exe = r"C:\P\Muscle\muscle3.8.31_i86win32.exe"):
-    '''
-    use the output of getPairsFromTwoListSeqs, further calculate matched length
-    outfile is a tsv file, with three columns: seqs1_id, seqs2_id, matched_length. There is a headline.
-    if outfile exist, first readin all lines of outfile, and write all lines other than the last line back (the last line may be incomplete)
-    only calculate matched_length for uncompared pairs.
-    return a dataframe with three columns: seqs1_id, seqs2_id, matched_length.
-    '''
-    df = []
-    if isinstance(seqs1,str):
-        seqs1 = list(SeqIO.parse(seqs1,'fasta'))
-    if isinstance(seqs2,str):
-        seqs2 = list(SeqIO.parse(seqs2,'fasta'))
-    pairsFinished = []#store the finished pairs
-    pairs = getPairsFromTwoListSeqs(seqs1, seqs2, identitymin = identitymin, max_target = max_target,error_rate = error_rate,muscle_exe = muscle_exe)
-    print('total pairs to compare:', len(pairs))
-    savefile = False
-    if outfile is not None:
-        savefile = True
-        if os.path.isfile(outfile):
-            templs = open(outfile).readlines()
-            fout = open(outfile,'w')#save back the file
-            fout.write(templs[0])
-            for _line in templs[1:-1]:
-                _line = _line.replace('\n','')
-                _es = re.split(',|\t|;| ',_line)
-                pairsFinished.append((int(_es[0]),int(_es[1])))
-                df.append((int(_es[0]),int(_es[1]),int(_es[2])))
-                fout.write('\t'.join(_es)+'\n')
-            #check if pairsFinished and pairs the same
-            print(len(pairsFinished), 'pairs already finished calculating of matched_length')
-        else:
-            fout = open(outfile,'w')
-            fout.write('seq1_id\tseq2_id\tmatched_length\n')
-    pairsFinished = set(pairsFinished)
-    if len(pairsFinished - set(pairs))!=0:
-        print('the file ', outfile, 'is not from the same setting of this run!')
-        return None
-    for pair in pairs:
-        if pair not in pairsFinished:
-            seqList = [seqs1[pair[0]], seqs2[pair[1]]]
-            matched_length = getProteinAlignLength(seqList,mincommon=identitymin,error_rate=error_rate,muscle_exe=muscle_exe)
-            if savefile:
-                fout.write(str(pair[0]) +'\t' +str(pair[1]) +'\t' +str(matched_length)+'\n')
-            df.append((pair[0],pair[1],matched_length))
-    if savefile:
-        fout.close()
-    print('df len:', len(df))
-    df = pd.DataFrame(df,columns = ['seqs1_id', 'seqs2_id', 'matched_length'])
-    return df
 
-def test20170405():
-    '''
-    test functions above
-    '''
-    f_fasta1 = r"D:\Insects\ManducaSexta\Interpro\20160612MsSPSPH257MCOTOGS2.txt"
-    f_fasta2 = r"D:\Insects\ManducaSexta\Interpro\20170612_MsSPSPH193Annotated.txt"
-    seqs1 = openfile2lsFasta(f_fasta1)
-    seqs2 = openfile2lsFasta(f_fasta2)
-    df = compare2lsSeqs(seqs1,seqs2, outfile = r"D:\P\3Language\Xiaolong\python\list.csv")
-    print(df.shape)
-    df.loc[:,'seq1name'] = [seqs1[i].id for i in df.loc[:,'seqs1_id']]
-    df.loc[:,'seq2name'] = [seqs2[i].id for i in df.loc[:,'seqs2_id']]
-    df.loc[:,'seq1len'] = [len(seqs1[i]) for i in df.loc[:,'seqs1_id']]
-    df.loc[:,'seq2len'] = [len(seqs2[i]) for i in df.loc[:,'seqs2_id']]
-    df.loc[:,'seq1seq'] = [seqs1[i].seq for i in df.loc[:,'seqs1_id']]
-    df.loc[:,'seq2seq'] = [seqs2[i].seq for i in df.loc[:,'seqs2_id']]
-    df.to_csv('list2.csv')
-    open('list.txt','w').write('\n'.join([e.id for e in seqs1]))
-    
-    

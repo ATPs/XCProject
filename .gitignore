@@ -53,3 +53,8 @@ Temporary Items
 *.ini
 *.ini
 *.html
+*.ini
+*/.*
+.ipynb_checkpoints
+*/.ipynb_checkpoints/*
+*.ini
