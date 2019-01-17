@@ -846,3 +846,58 @@ plt.savefig("scan1525.png",dpi=300)
 plt.close()
 print(count[0])
 
+#20190114
+f1 = r"C:\Users\ATPs\OneDrive\Lab\data\ppt\20170818LabMeeting PGRP13 cutting PG\DAP_lysozyme.featureXML"
+f2 = r"C:\Users\ATPs\OneDrive\Lab\data\ppt\20170818LabMeeting PGRP13 cutting PG\lys_PG.featureXML"
+f3 = r"C:\Users\ATPs\OneDrive\Lab\data\ppt\20170818LabMeeting PGRP13 cutting PG\PGRP1_DAP_Zn.featureXML"
+f4 = r"C:\Users\ATPs\OneDrive\Lab\data\ppt\20170818LabMeeting PGRP13 cutting PG\PGRP1_Lys_Zn.featureXML"
+files = [f1,f2,f3,f4]
+
+from bs4 import BeautifulSoup
+def processOne(f1):
+    soup = BeautifulSoup(open(f1).read(),'lxml')
+    features = soup.find_all(name='feature')
+    feature = features[0]
+    fout = open(f1.replace('.featureXML','.txt'),'w')
+    for feature in features:
+        rt = feature.find(name='position',dim='0').text
+        mz = feature.find(name='position',dim='1').text
+        charge = feature.find(name='charge').text
+        intensity = feature.find(name='intensity').text
+        fout.write('\t'.join([rt,mz,charge,intensity])+'\n')
+    fout.close()
+for f1 in files:
+    processOne(f1)
+
+processOne(r"E:\Insects\ManducaSexta\20160212AliciaMSMS\RAW\1-1402_PGRP1_40hr.PeakPickerHiRes.FeatureFinderCentroided.featureXML")
+
+
+cmd = r'''
+"C:\P\OpenMS-2.4.0\bin\FileFilter.exe" -in "E:\Insects\ManducaSexta\20160212AliciaMSMS\RAW\{file}.mzML" -out "E:\Insects\ManducaSexta\20160212AliciaMSMS\RAW\{file}.MS1.mzML"  -peak_options:level 1
+
+"C:\P\OpenMS-2.4.0\bin\PeakPickerHiRes.exe" -in "E:\Insects\ManducaSexta\20160212AliciaMSMS\RAW\{file}.MS1.mzML" -out "E:\Insects\ManducaSexta\20160212AliciaMSMS\RAW\{file}.PeakPickerHiRes.mzML" -threads 4  -algorithm:ms_levels 1  -algorithm:SignalToNoise:bin_count 3 -algorithm:SignalToNoise:min_required_elements 7 -algorithm:signal_to_noise 0
+
+"C:\P\OpenMS-2.4.0\bin\FeatureFinderCentroided.exe" -in "E:\Insects\ManducaSexta\20160212AliciaMSMS\RAW\{file}.PeakPickerHiRes.mzML" -out "E:\Insects\ManducaSexta\20160212AliciaMSMS\RAW\{file}.PeakPickerHiRes.FeatureFinderCentroided.featureXML" -threads 4 -algorithm:isotopic_pattern:charge_high 2 -algorithm:fit:max_iterations 1000 -algorithm:mass_trace:mz_tolerance 0.004  -algorithm:mass_trace:min_spectra 10 -algorithm:mass_trace:max_missing 0 -algorithm:feature:min_rt_span 0.1 -algorithm:feature:max_rt_span 10000000 -algorithm:feature:rt_shape symmetric -algorithm:isotopic_pattern:mz_tolerance 0.02 -algorithm:isotopic_pattern:optional_fit_improvement 100
+
+'''
+files = '''2-1402_DAP_PG
+3-1402_LYS_PG
+4-1402_PGRP1_DAP_PG_40hr
+5-1402_PGRP1_LYS_PG_40hr
+6-1402_PGRP1_DAP_PG_70hr
+7-1402_PGRP1_LYS_PG_70hr
+8-1402_PGRP2_zinc_40hr
+9-1402_PRGP2_MPP_DAP_zinc_40hrs
+10-1402_PGRP2_MPP_LYS_zinc_40hr
+'''.split()
+
+import os
+for file in files:
+    print(cmd.format(file=file))
+
+folder = r"E:\Insects\ManducaSexta\2017Mansi\features"
+import glob
+files = glob.glob(folder+'\\*.featureXML')
+
+for f in files:
+    processOne(f)
