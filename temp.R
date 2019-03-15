@@ -14,7 +14,7 @@ f.getbasetype <- function(x){
 
 f.getSplitgroup <- function(x){
   if (grepl('.split',x)) {
-    return(as.integer(gsub("(.*split\\d\\.)|(\\.STRUCTUREresult.*)","",x)))
+    return(as.integer(gsub("(.*split\\d*\\.)|(\\.STRUCTUREresult.*)","",x)))
   } else return(0)
 }
 
