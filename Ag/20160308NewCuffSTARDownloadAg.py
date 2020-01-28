@@ -58,7 +58,8 @@ def AgDownloadSTARCufflinksAlltogether():
             fo.write("cd RNA\n")
             fo.write("wget -q " + dicNameLink[ele][0] +"\n")
             fo.write("wget -q " + dicNameLink[ele][1] +"\n")
-            fo.write("java -jar /home/ks2073/p/2015/trinityrnaseq-2.1.1/trinity-plugins/Trimmomatic/trimmomatic.jar PE -phred33 -threads 12 ")
+            fo.write("java -jar /home/ks2073/p/2015/trinityrnaseq-2.1.1/trinity-plugins/Trimmomatic/trimmomatic.jar PE -phred33 
+                     ")
             fo.write(ele+"_1.fastq.gz "+ele+"_2.fastq.gz "+ele+"_1fastqTrimPaired.fq.gz "+ele+"_1fastqTrimUnpaired.fq.gz ")
             fo.write(ele+"_2fastqTrimPaired.fq.gz "+ele+"_2fastqTrimUnpaired.fq.gz ")
             fo.write("ILLUMINACLIP:/home/ks2073/p/2015/trinityrnaseq-2.1.1/trinity-plugins/Trimmomatic/adapters/TruSeq3-PE.fa:2:30:10 SLIDINGWINDOW:4:30 HEADCROP:15 LEADING:20 TRAILING:20 MINLEN:50")
